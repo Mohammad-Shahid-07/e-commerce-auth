@@ -6,12 +6,12 @@ import VerifyEmail from "./VerifyEmail";
 
 const SignupForm = () => {
   return (
-    <div className="w-full max-w-lg space-y-8 rounded-3xl border p-6">
+    <div className="mx-auto mt-5 w-full max-w-lg space-y-8 rounded-3xl border border-[#C1C1C1] p-6">
       <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-foreground">
         Create a new account
       </h2>
 
-      <form className="space-y-6" action="#" method="POST">
+      <form className="space-y-6 border-none" action="#" method="POST">
         <div>
           <Label htmlFor="name" className="block text-sm font-medium">
             Name

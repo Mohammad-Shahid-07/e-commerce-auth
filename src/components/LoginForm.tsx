@@ -9,7 +9,7 @@ const LoginForm = () => {
 
   return (
  
-      <div className="w-full max-w-lg space-y-8 rounded-3xl border p-6">
+      <div className="w-full max-w-lg space-y-8 rounded-3xl  border  mt-5  border-[#C1C1C1] mx-auto p-6">
         <div className="px-4 py-8 shadow sm:rounded-lg sm:px-10">
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
             Login
