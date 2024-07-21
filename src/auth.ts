@@ -6,6 +6,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "./server/db";
+import { JWTExpired } from "jose/errors";
 
 const secretKey = process.env.JWT_SECRET;
 if (!secretKey) {
@@ -47,7 +48,11 @@ async function decrypt(input: string): Promise<Session | null> {
     }
     return null;
   } catch (error) {
-    console.error("JWT verification failed:", error);
+    if (error instanceof JWTExpired) {
+      console.error("JWT verification failed: Token has expired.");
+    } else {
+      console.error("JWT verification failed:");
+    }
     return null;
   }
 }
@@ -208,7 +213,7 @@ export async function updateSession(request: NextRequest) {
 
     const res = NextResponse.next();
     res.cookies.set("session", newSession, {
-      httpOnly: true, 
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 60 * 60 * 24 * 7, // 1 week
