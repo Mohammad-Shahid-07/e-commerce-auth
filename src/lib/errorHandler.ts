@@ -1,7 +1,7 @@
 import { JWTExpired, JWTInvalid } from "jose/errors";
 import { z } from "zod";
 
-interface ErrorResponse {
+export interface ErrorResponse {
   success: false;
   message: string;
   errors?: unknown;

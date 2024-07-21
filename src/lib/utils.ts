@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { type ErrorResponse } from "./errorHandler";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -13,3 +14,4 @@ export const checkEnvironment = () => {
 
   return base_url;
 };
+

@@ -35,6 +35,7 @@ export const getCategories = async ({ page, pageSize }: GetCategoriesInput) => {
         pageSize,
         totalCount,
       },
+      message: "Fetch Successful"
     };
   } catch (error) {
     return handleError(error);
