@@ -3,7 +3,6 @@
 import { handleError } from "./lib/errorHandler";
 import { db } from "./server/db";
 import { getSession } from "./auth";
-
 interface GetCategoriesInput {
   page: number;
   pageSize: number;
@@ -35,7 +34,7 @@ export const getCategories = async ({ page, pageSize }: GetCategoriesInput) => {
         pageSize,
         totalCount,
       },
-      message: "Fetch Successful"
+      message: "Fetch Successful",
     };
   } catch (error) {
     return handleError(error);

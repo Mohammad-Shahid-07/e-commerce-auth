@@ -1,11 +1,11 @@
 "use server";
-import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+
+import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "./server/db";
-import { checkEnvironment } from "./lib/utils";
 
 const secretKey = process.env.JWT_SECRET;
 if (!secretKey) {
@@ -183,7 +183,6 @@ export async function getSession() {
   if (decryptedSession && decryptedSession.exp * 1000 > Date.now()) {
     return decryptedSession;
   }
-  await logout(); // Expired session, log out the user
   return null;
 }
 
@@ -209,7 +208,7 @@ export async function updateSession(request: NextRequest) {
 
     const res = NextResponse.next();
     res.cookies.set("session", newSession, {
-      httpOnly: true,
+      httpOnly: true, 
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 60 * 60 * 24 * 7, // 1 week
@@ -227,7 +226,8 @@ async function sendVerificationEmail(
   code: string,
 ) {
   try {
-    const res = await fetch(checkEnvironment().concat("/api/mail"), {
+    const baseUrl = process.env.NEXT_PUBLIC_URL;
+    const res = await fetch(`${baseUrl}/api/mail`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

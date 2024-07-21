@@ -10,7 +10,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "./ui/card";
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/form";
 import { login } from "@/auth";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -33,7 +35,7 @@ const LoginSchema = z.object({
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -45,14 +47,21 @@ const LoginForm: React.FC = () => {
   });
 
   async function onSubmit(data: z.infer<typeof LoginSchema>) {
-    setLoginError(null);
+    setIsLoading(true);
 
-    const response = await login(data);
+    try {
+      const response = await login(data);
 
-    if (!response.success) {
-      setLoginError(response.message ?? "An error occurred during login");
-    } else {
-      router.refresh();
+      if (!response.success) {
+        toast.error("Login Failed");
+      } else {
+        toast.success("Login Successful");
+        router.refresh();
+      }
+    } catch (error) {
+      toast("Login Failed");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -88,6 +97,7 @@ const LoginForm: React.FC = () => {
                       type="email"
                       placeholder="Enter"
                       {...field}
+                      disabled={isLoading}
                     />
                   </FormControl>
                   <FormMessage />
@@ -107,11 +117,13 @@ const LoginForm: React.FC = () => {
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter"
                         {...field}
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
                         className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5"
                         onClick={() => setShowPassword(!showPassword)}
+                        disabled={isLoading}
                       >
                         {showPassword ? "Hide" : "Show"}
                       </button>
@@ -122,16 +134,20 @@ const LoginForm: React.FC = () => {
               )}
             />
 
-            {loginError && (
-              <p className="text-center text-red-500">{loginError}</p>
-            )}
-
             <div>
               <Button
                 type="submit"
                 className="flex w-full justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                disabled={isLoading}
               >
-                LOGIN
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  "LOGIN"
+                )}
               </Button>
             </div>
           </form>

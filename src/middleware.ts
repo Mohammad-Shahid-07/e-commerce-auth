@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getSession } from "@/auth"; // Adjust this import based on your session management function
-
+import { getSession } from "@/auth";
 export async function middleware(request: NextRequest) {
-  // Get the session data from the cookies
-
   const session = await getSession();
-  console.log(session);
 
   // Check if the request URL is `/login` or `/signup`
   if (
     request.nextUrl.pathname === "/login" ||
     request.nextUrl.pathname === "/signup"
   ) {
-    // If user is authenticated, redirect to the home page
     if (session) {
       return NextResponse.redirect(new URL("/", request.url));
     }

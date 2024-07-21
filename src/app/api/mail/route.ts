@@ -1,47 +1,36 @@
 import { NextResponse } from "next/server";
-import { Recipient, EmailParams, MailerSend, Sender } from "mailersend";
+import nodemailer from "nodemailer";
 
-interface RequestBody {
-  email: string;
-  code: string;
-  name: string;
-}
-
-export async function POST(request: Request): Promise<Response> {
+export async function POST(request: Request) {
   try {
-    const { email, code, name } = (await request.json()) as RequestBody;
-
-    if (!email || !code || !name) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 },
-      );
+    const {name, email, code } = await request.json();
+    if(!name || !email || !code) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const mailersend = new MailerSend({
-      apiKey: process.env.MAILERSEND_API_KEY!,
+    const senderMail = process.env.NODEMAILER_EMAIL;
+    const senderPass = process.env.NODEMAILER_PASSWORD;
+
+    const transporter = nodemailer.createTransport({
+      pool: true,
+      service: "hotmail",
+      port: 2525,
+      auth: {
+        user: senderMail,
+        pass: senderPass,
+      },
+      maxConnections: 1,
     });
-
-    const sentFrom = new Sender(
-      "contact@trial-zr6ke4nqmje4on12.mlsender.net",
-      "Mohammad Shaid",
-    );
-
-    const recipients = [new Recipient(email, name)];
-
-    const emailParams = new EmailParams()
-      .setFrom(sentFrom)
-      .setTo(recipients)
-      .setReplyTo(sentFrom)
-      .setSubject("Your Verification Code")
-      .setHtml(`<strong>Your verification code is: ${code}</strong>`)
-      .setText(`Your verification code is: ${code}`);
-
-    await mailersend.email.send(emailParams);
+    await transporter.sendMail({
+      from: senderMail,
+      to: email,
+      subject: "Your Verification Code",
+      text: `Hi there ${name}, Your verification code is: ${code}`,
+    });
 
     return NextResponse.json({ message: "Email sent successfully" });
   } catch (error) {
-    console.error("Failed to send email");
+    console.error("Failed to send email", error);
     return NextResponse.json(
       { error: "Failed to send email" },
       { status: 500 },

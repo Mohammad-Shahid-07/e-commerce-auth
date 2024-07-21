@@ -62,7 +62,6 @@ const SignupForm: React.FC = () => {
         setEmailSent(true);
       }
       return toast.success(res.message);
-      router.refresh();
     } catch (error) {
       setLoading(false);
       console.error("An error occurred:", error);
