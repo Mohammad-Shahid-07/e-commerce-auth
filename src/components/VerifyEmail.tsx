@@ -76,7 +76,7 @@ const VerifyEmail = ({ email }: VerifyEmailProps) => {
   }
 
   return (
-    <Card className="mx-auto max-w-lg p-10">
+    <Card className="mx-auto mt-10 max-w-lg p-10">
       <CardHeader className="mb-8 space-y-8">
         <CardTitle className="text-center font-semibold">
           Verify your email
